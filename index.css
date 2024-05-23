@@ -16,9 +16,13 @@
     display: flex;
     justify-content: space-between;
     gap: 40px;
+   
 }
-#nav-items ul li{
+#nav-items ul .li{
     list-style: none;
+    text-decoration: none;
+    color: inherit;
+    
 }
 #nav-items ul li:hover{
     color: #ff4800;
@@ -31,6 +35,7 @@
     justify-content: center;
     flex-wrap: wrap;
     gap: 16px;
+    
 }
 .restro-card{
     width: 18vw;
@@ -39,6 +44,11 @@
     margin: 10px;
     border: 1px solid red;
     padding: 10px;
+    
+}
+.restro-container .h4{
+    text-decoration: none;
+    color: black;
 }
 .res-card{
     width: 100%;

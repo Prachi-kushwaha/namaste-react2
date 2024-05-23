@@ -1,4 +1,4 @@
-import IMAGE_URL from "./utils/contants"
+import {IMAGE_URL} from "./utils/contants"
 
 const RestroCard = (props)=>{
     const {resData } = props
@@ -15,7 +15,7 @@ const RestroCard = (props)=>{
             // alt="res-logo" 
             src={IMAGE_URL + cloudinaryImageId }
             />
-           <h4>{name}</h4>
+           <h4 className="h4">{name}</h4>
            <h4>{cuisines.join(", ")}</h4>
            <h4>{costForTwo}</h4>
            <h4>{avgRating} stars</h4>
