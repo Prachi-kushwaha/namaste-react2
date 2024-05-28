@@ -1,91 +1,46 @@
-// import { useEffect, useState } from "react";
-// import Shimmer from "./ShimmerUI";
 
-
-// const RestaurantMenu = () => {
-//   const [resInfo, setResInfo] = useState(null);
-
-//   useEffect(() => {
-//     fetchMenu();
-//   }, []);
-
-//   const fetchMenu = async () => {
-//     const data = await fetch(
-//       "https://www.swiggy.com/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=18.5204303&lng=73.8567437&restaurantId=323532"
-//     );
-//     const json = await data.json();
-//     console.log(json);
-//     setResInfo(json.data);
-//   };
-//   if (resInfo == null) {
-//     return <Shimmer />;
-//   }
-
-//   const { name, cuisines, avgRating, sla } =
-//     resInfo?.cards[2]?.card?.card?.info;
-  
-  
-
-//   return(
-//     <div className="menu-container">
-//     <h1>{name}</h1>
-//     <h3>{cuisines.join(", ")}</h3>
-//     <h3>{avgRating}</h3>
-//     <h3>{sla.deliveryTime}</h3>
-    
-   
-//   </div>
-//   )
-
-  
-// };
-// export default RestaurantMenu;
-
-import { useState, useEffect } from "react";
 import Shimmer from "./ShimmerUI";
 import { useParams } from "react-router-dom";
-import { MENU_API } from "./utils/contants";
+import useRestaurentMenu from "../utils/useRestaurentMenu";
+import RestaurentCategory from "./RestaurentCategory";
+import { useState } from "react";
+
 
 const RestaurantMenu = () => {
-  const [resInfo, setResInfo] = useState(null);
 
   const { resId } = useParams();
-
-  useEffect(() => {
-    fetchMenu();
-  }, []);
-
-  const fetchMenu = async () => {
-    const data = await fetch(MENU_API + resId);
-    const json = await data.json();
-    setResInfo(json.data);
-  };
+  const[showIndex, setShowIndex] = useState(false)
+  const resInfo = useRestaurentMenu(resId)
 
   if (resInfo === null) return <Shimmer />;
 
   const { name, cuisines, costForTwoMessage } =
     resInfo?.cards[2]?.card?.card?.info;
 
-  const { itemCards } =
-    resInfo?.cards[5]?.groupedCard?.cardGroupMap?.REGULAR?.cards[1]?.card?.card;
+  // const { itemCards } =
+  //   resInfo?.cards[5]?.groupedCard?.cardGroupMap?.REGULAR?.cards[1]?.card?.card;
 
-  console.log(itemCards);
-
+    const categories =
+    resInfo?.cards[5]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
+      (c) =>
+        c.card?.["card"]?.["@type"] ===
+        "type.googleapis.com/swiggy.presentation.food.v2.ItemCategory"
+    );
+    console.log(categories)
   return (
-    <div className="menu">
-      <h1>{name}</h1>
-      <p>
+    <div className="text-center">
+      <h1 className="font-bold text-xl mt-6 mb-2">{name}</h1>
+      <p className="text-lg">
         {cuisines.join(", ")} - {costForTwoMessage}
       </p>
-      <h2>Menu</h2>
-      <ul>
-        {itemCards.map((item) => (
-          <li key={item.card.info.id}>
-            {item.card.info.name} -{" Rs."}
-            {item.card.info.price / 100 || item.card.info.defaultPrice / 100}
-          </li>
-        ))}
-      </ul>
+      {/* here we build categories accordian */}
+      {categories.map((category, index)=>(
+      <RestaurentCategory
+      key={category?.card?.card.title}
+      data={category?.card?.card}
+      showItems={index===showIndex? true:false}
+      setShowIndex={()=>setShowIndex(index)}/>
+      ))}
     </div>
   );
 };
